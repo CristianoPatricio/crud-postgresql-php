@@ -13,28 +13,28 @@ or die ("Could not connect to server\n");
 
 $_SESSION['delete'] = "";
 
-if(isset($_GET["user"]))
+if(isset($_GET["id_sinistro"]))
 {
-    $username = $_GET["user"];
+    $id_sinistro = $_GET["id_sinistro"];
 }
 
-$qry = "select id from utilizador where username LIKE '$username';";
+$qry = "select * from sinistros where id_sinistro = '$id_sinistro';";
 $result = pg_query($con,$qry);
 $row = pg_fetch_row($result);
-$id_user = $row[0];
-echo $id_user;
+
+echo pg_num_rows($result);
 
 if (pg_num_rows($result) != 0) {
-    $sqlDeleteRecord = "DELETE FROM utilizador WHERE id = $id_user;";
+    $sqlDeleteRecord = "BEGIN; DO $$ BEGIN PERFORM pg_sleep(5); END $$; DELETE FROM sinistros WHERE id_sinistro = $id_sinistro; COMMIT; END;";
     $q = pg_query($con,$sqlDeleteRecord);
     
     if ($q) {
         $_SESSION['delete'] = "success";
-        header('Location: profile.php');
+        header('Location: sinistros.php');
         pg_close($con);
     } else {
         $_SESSION['delete'] = "failed";
-        header('Location: profile.php');
+        header('Location: sinistros.php');
         pg_close($con);
     }
 }

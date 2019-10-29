@@ -31,8 +31,11 @@ $id_sinistro = $row[0];
 $datahora = $row[3];
 $mortos = $row[4];
 $feridosgraves = $row[5];
-$km = $row[6];
-$natureza = $row[7];
+$via = $row[6];
+$km = $row[7];
+$natureza = $row[8];
+$lat = $row[9];
+$lon = $row[10];
 
 ?>
 <div class="modal-header text-center">
@@ -48,8 +51,11 @@ $natureza = $row[7];
     <p><b>Concelho:</b> <?php echo $concelho; ?></p>
     <p><b>Nº Mortos:</b> <?php echo $mortos; ?></p>
     <p><b>Nº Feridos Graves:</b> <?php echo $feridosgraves; ?></p>
+    <p><b>Via:</b> <?php echo $via; ?></p>
     <p><b>Quilómetro:</b> <?php echo $km; ?></p>
     <p><b>Natureza:</b> <?php echo $natureza; ?></p>
+    <p><b>Latitude:</b> <?php echo $lat; ?></p>
+    <p><b>Longitude:</b> <?php echo $lon; ?></p>
 </div>
 <div class="modal-footer d-flex justify-content-center">
     <button type="button" data-dismiss="modal" class="btn btn-primary">Fechar</button>

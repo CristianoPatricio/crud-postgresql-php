@@ -15,20 +15,36 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 	<meta charset="utf-8">
 	<title>Perfil</title>
 	<link href="style.css" rel="stylesheet" type="text/css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+	
+	<!-- Bootstrap -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> --> 
+	
+	<!--DateTime Picker-->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker-standalone.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js"></script>
+
 </head>
 
 <body class="loggedin">
 	<nav class="navtop">
 		<div>
 			<h1>Gestão Sinistros</h1>
-            <a href="home.php"><i class="fas fa-home"></i>Home</a>
-            <a href="distritos.php"><i class="fas fa-city"></i>Distritos</a>
-            <a href="concelhos.php"><i class="fas fa-university"></i>Concelhos</a>
+			<a href="home.php"><i class="fas fa-home"></i>Home</a>
+			<a href="distritos.php"><i class="fas fa-city"></i>Distritos</a>
+			<a href="concelhos.php"><i class="fas fa-university"></i>Concelhos</a>
 			<a href="sinistros.php"><i class="fas fa-car-crash"></i>Sinistros</a>
 			<a href="profile.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
 			<a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
@@ -36,36 +52,165 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 	</nav>
 	<div class="content">
 		<span id="msgActions"></span>
-		<h2>Gestão de Sinistros</h2>
+		<h2>Sinistros</h2>
 		<div>
-            <h2>Registar novo sinistro</h2> <br>
-            <!--
-			<form action="register.php" method="post">
+			<h2>Registar novo sinistro</h2> <br>
+			<form action="addNewAccident.php" method="post" style="background-color: #e3e8e5; padding: 10px; border-radius: 5px;">
 				<div class="form-row">
 					<div class="form-group col-md-4">
-						<i class="fas fa-user prefix grey-text"></i>
-						<label for="username">Username</label>
-						<input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
-					</div>
-					<div class="form-group col-md-4">
-						<i class="fas fa-lock prefix grey-text"></i>
-						<label for="password">Password</label>
-						<input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
-					</div>
-					<div class="form-group col-md-4">
-						<i class="fas fa-user-shield grey-text"></i>
-						<label for="role">Permissões</label>
-						<select class="form-control" name="role">
-							<option value="admin">Admin</option>
-							<option value="user_cru">User-CRU</option>
-							<option value="user_R">User-R</option>
+						<i class="fas fa-city grey-text"></i>
+						<label for="role">Distrito</label>
+						<select class="form-control" id="selectListDistritos" name="distrito" onchange="getItemValue()" required>
+							<option value="">Selecione...</option>
+							<?php
+							// connect to database
+							$conn = pg_pconnect("host=52.47.199.255 dbname=teste user=ubuntu password=1234");
+							if (!$conn) {
+								echo "An error occurred.\n";
+								exit;
+							}
+							// get all the uid from the uid column in users
+							$result = pg_query($conn, "SELECT id_distrito,nome_distrito FROM distritos");
+							if (!$result) {
+								// error message  
+								echo "An error occurred.\n";
+								exit;
+							}
+							// dispaly on screen all uid data from users
+							while ($row = pg_fetch_row($result)) {
+								echo '<option value="' . $row[0] . '">' . $row[1] . '</option>';
+							}
+							?>
 						</select>
 					</div>
+					<script>
+						function getItemValue() {
+							// Get selected value
+							var itemSelect = document.querySelector('#selectListDistritos').selectedIndex;
+							window.location.href = "sinistros.php?item=" + itemSelect;
+						}
+					</script>
+					<div class="form-group col-md-4">
+						<i class="fas fa-university grey-text"></i>
+						<label for="role"> Concelho </label>
+						<select class="form-control" name="concelho">
+							<option value=""> Selecione... </option>
+							<?php
+
+							$item = $_GET['item'];
+							if ($item == null) $item = 0;
+
+							// get all the uid from the uid column in users
+							$result = pg_query($conn, "SELECT id_concelho,nome_concelho FROM concelhos WHERE id_distrito = $item");
+							if (!$result) {
+								// error message  
+								echo "An error occurred.\n";
+								exit;
+							}
+							// dispaly on screen all uid data from users
+							while ($row = pg_fetch_row($result)) {
+								echo '<option value="' . $row[0] . '">' . $row[1] . '</option>';
+							}
+							?>
+						</select>
+						<script>
+							document.querySelector("#selectListDistritos").selectedIndex = <?php echo $item; ?>;
+						</script>
+					</div>
+					<div class='form-group col-md-4'>
+						<i class="fas fa-calendar grey-text"></i>
+						<label for="role"> Data/Hora </label>
+						<div class='input-group date' id='datetimepicker1'>
+							<input name="datahora" type='text' class="form-control" value="" id="input-picker"/>
+						</div>
+					</div>
+					<script type="text/javascript">
+						var d = new Date();
+					
+						$("#input-picker").datetimepicker({
+							format: 'DD-MM-YYYY HH:mm',
+							defaultDate: d
+						});
+
+						$(function() {
+							$('#input-picker').datetimepicker();
+						});
+					</script>
 				</div>
+				<div class="form-row">
+					<div class="form-group col-md-2">
+						<i class="fas fa-skull-crossbones grey-text"></i>
+						<label for="role">Nº Mortos</label>
+						<input class="form-control" type="number" name="nMortos" value="0" min="0" max="20"/>
+					</div>
+					<div class="form-group col-md-2">
+						<i class="fas fa-user-injured grey-text"></i>
+						<label for="role">Nº F. Graves</label>
+						<input class="form-control" type="number" name="nFGraves" value="0" min="0" max="20"/>
+					</div>
+					<div class="form-group col-md-2">
+						<i class="fas fa-tachometer-alt grey-text"></i>
+						<label for="role">Quilómetro</label>
+						<input class="form-control" type="number" name="quilometro" value="0.0" min="0" max="1000" step="0.001"/>
+					</div>
+					<div class="form-group col-md-6">
+						<i class="fas fa-road grey-text"></i>
+						<label for="role">Via</label>
+						<select class="form-control" name="via">
+							<option value=""> Selecione... </option>
+							<?php
+
+							// get all the uid from the uid column in users
+							$result = pg_query($conn, "SELECT DISTINCT via FROM sinistros WHERE id_distrito = $item AND via IS NOT NULL");
+							if (!$result) {
+								// error message  
+								echo "An error occurred.\n";
+								exit;
+							}
+							// dispaly on screen all uid data from users
+							while ($row = pg_fetch_row($result)) {
+								echo '<option value="' .$row[0] .'">' . $row[0] . '</option>';
+							}
+							?>-->
+						</select>
+					</div>
+					<div class="form-group col-md-6">
+						<i class="fas fa-car-crash grey-text"></i>
+						<label for="role">Natureza</label>
+						<select class="form-control" name="natureza" required>
+							<option value=""> Selecione... </option>
+							<?php
+
+							// get all the uid from the uid column in users
+							$result = pg_query($conn, "SELECT DISTINCT natureza FROM sinistros WHERE id_distrito = $item AND natureza IS NOT NULL");
+							if (!$result) {
+								// error message  
+								echo "An error occurred.\n";
+								exit;
+							}
+							// dispaly on screen all uid data from users
+							while ($row = pg_fetch_row($result)) {
+								echo '<option value="' .$row[0] .'">' . $row[0] . '</option>';
+							}
+							?>
+						</select>
+					</div>
+					<div class="form-group col-md-3">
+						<i class="fas fa-location-arrow grey-text"></i>
+						<label for="role">Latitude</label>
+						<input class="form-control" type="number" name="lat" value="0.0" min="-90" max="90" step="0.001"/>
+					</div>
+					<div class="form-group col-md-3">
+						<i class="fas fa-location-arrow grey-text"></i>
+						<label for="role">Longitude</label>
+						<input class="form-control" type="number" name="lon" value="0.0" min="-180" max="180" step="0.001"/>
+					</div>
+				</div>
+
+
 				<span id="errorMessage"></span>
-				<button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Registar</button>
-            </form>
-            -->
+				<button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-plus-circle"></i> Registar</button>
+			</form>
 			<br>
 			<h2>Gerir sinistros</h2> <br>
 			<?php
@@ -83,7 +228,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			$pdo = new PDO("pgsql:host=52.47.199.255; dbname=teste;", "ubuntu", "1234");
 
 			/* Instrução de consulta para paginação com PostgreSQL */
-			$sql = "SELECT id_sinistro, datahora, mortos, feridosgraves, quilometro, natureza FROM sinistros ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+			$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			$stm = $pdo->prepare($sql);
 			$stm->execute();
 			$dados = $stm->fetchAll(PDO::FETCH_OBJ);
@@ -127,17 +272,17 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 								<tr class='active'>
 									<th class="align-middle">Cód. Sinistro</th>
 									<th class="align-middle">Data/hora</th>
-                                    <th class="align-middle">Natureza</th>
-                                    <th class="align-middle">Ações</th>
+									<th class="align-middle">Natureza</th>
+									<th class="align-middle">Ações</th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php foreach ($dados as $sinistro) : ?>
 									<tr>
 										<td><?= $sinistro->id_sinistro ?></td>
-                                        <td><?= $sinistro->datahora ?></td>
-                                        <td><?= $sinistro->natureza ?></td>
-										<td><a href="#modalViewDetails" class="modalVerDetalhes btn btn-info" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id="<?= $sinistro->id_sinistro ?>"><i class="fas fa-search-plus"></i></a> <a class="modalEliminarUser btn btn-danger" href="" data-toggle="modal" data-backdrop='static' data-keyboard='false' data=""><i class="fas fa-trash"></i></a> <a href="" class="modalEditarUser btn btn-warning" data-toggle="modal" data-backdrop='static' data-keyboard='false' data=""><i class="fas fa-user-edit"></i></a></td>
+										<td><?= $sinistro->datahora ?></td>
+										<td><?= $sinistro->natureza ?></td>
+										<td><a href="#modalViewDetails" class="modalVerDetalhes btn btn-info" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id="<?= $sinistro->id_sinistro ?>"><i class="fas fa-search-plus"></i></a> <a class="modalEliminarSinistro btn btn-danger" href="#modalDeleteConfirmation" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id-sinistro="<?= $sinistro->id_sinistro ?>"><i class="fas fa-trash"></i></a> <a href="#modalUpdateSinistro" class="modalEditarSinistro btn btn-warning" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id-sinistro="<?= $sinistro->id_sinistro?>" data-id-distrito="<?= $sinistro->id_distrito?>" data-id-concelho="<?= $sinistro->id_concelho?>" data-datahora="<?= $sinistro->datahora?>" data-m="<?= $sinistro->mortos?>" data-fg="<?= $sinistro->feridosgraves?>" data-via="<?= $sinistro->via?>" data-km="<?= $sinistro->quilometro?>" data-natureza="<?= $sinistro->natureza?>" data-lat="<?= $sinistro->latitude?>" data-lon="<?= $sinistro->longitude?>"><i class="fas fa-user-edit"></i></a></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -166,31 +311,40 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 	</div>
 	<script>
 		if ("<?php echo $_SESSION['duplicate']; ?>" === "duplicate") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O utilizador já existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O registo já existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			<?php $_SESSION['duplicate'] = ""; ?>
 		} else if ("<?php echo $_SESSION['added']; ?>" === "added") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador inserido com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo inserido com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			<?php $_SESSION['added'] = ""; ?>
 		} else if ("<?php echo $_SESSION['failed']; ?>" === "failed") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Ups! Erro ao inserir utilizador... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Ups! Erro ao inserir sinistro... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			<?php $_SESSION['failed'] = ""; ?>
 		}
 
 		if ("<? echo $_SESSION['delete']; ?>" === "success") {
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			<?php $_SESSION['delete'] = ""; ?>
 		}
 
 		if ("<? echo $_SESSION['update']; ?>" === "success") {
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			<?php $_SESSION['update'] = ""; ?>
 		}
 
-		$('.modalEditarUser').click(function() {
-			var username = $(this).attr('data-user-name');
-			var role = $(this).attr('data-user-role');
+		$('.modalEditarSinistro').click(function() {
+			var id_sinistro = $(this).attr('data-id-sinistro');
+			var id_distrito = $(this).attr('data-id-distrito');
+			var id_concelho = $(this).attr('data-id-concelho');
+			var datahora = $(this).attr('data-datahora');
+			var m = $(this).attr('data-m');
+			var fg = $(this).attr('data-fg');
+			var via = $(this).attr('data-via');
+			var km = $(this).attr('data-km');
+			var natureza = $(this).attr('data-natureza');
+			var lat = $(this).attr('data-lat');
+			var lon = $(this).attr('data-lon');
 			$.ajax({
-				url: "editModal.php?username=" + username + "&role=" + role,
+				url: "updateAccidentModal.php?id_sinistro=" + id_sinistro + "&id_distrito=" + id_distrito + "&id_concelho=" + id_concelho + "&datahora=" + datahora + "&m=" + m + "&fg=" + fg + "&via=" + via + "&km=" + km + "&natureza=" + natureza + "&lat=" + lat + "&lon=" + lon,
 				cache: false,
 				success: function(result) {
 					$(".modal-content").html(result);
@@ -198,10 +352,10 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			});
 		});
 
-		$('.modalEliminarUser').click(function() {
-			var username = $(this).attr('data-user-name');
+		$('.modalEliminarSinistro').click(function() {
+			var id = $(this).attr('data-id-sinistro');
 			$.ajax({
-				url: "deleteModal.php?username=" + username,
+				url: "deleteModalSinistros.php?id_sinistro=" + id,
 				cache: false,
 				success: function(result) {
 					$(".modal-content").html(result);
@@ -209,7 +363,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			});
 		});
 
-        $('.modalVerDetalhes').click(function() {
+		$('.modalVerDetalhes').click(function() {
 			var id = $(this).attr('data-id');
 			$.ajax({
 				url: "viewDetails.php?id=" + id,
@@ -222,9 +376,9 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 	</script>
 
 	<!-- MODAL EDITAR -->
-	<div class="modal fade modal" id="modalRegisterForm" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
+	<div class="modal fade modal" id="modalUpdateSinistro" role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="padding:10px;">
 
 			</div>
 		</div>
@@ -234,19 +388,19 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 	<div class="modal fade modal" id="modalDeleteConfirmation" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
-				
+
 			</div>
 		</div>
-    </div>
-    
-    <!-- MODAL DETALHES -->
-    <div class="modal fade modal" id="modalViewDetails" role="dialog">
+	</div>
+
+	<!-- MODAL DETALHES -->
+	<div class="modal fade modal" id="modalViewDetails" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
-				
+
 			</div>
 		</div>
-    </div>
+	</div>
 </body>
 
 </html>

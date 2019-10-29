@@ -1,10 +1,10 @@
 <?php
-$username = $_GET['username'];
+$id_sinistro = $_GET['id_sinistro'];
 ?>
 
-<form action="delete.php?user=<?php echo $username; ?>" method="post">
+<form action="deleteAccident.php?id_sinistro=<?php echo $id_sinistro; ?>" method="post">
 <div class="modal-header">
-    <h5 class="modal-title">Eliminar o utilizador <?php echo $username; ?>?</h5>
+    <h5 class="modal-title">Eliminar o sinistro #<?php echo $id_sinistro; ?>?</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
