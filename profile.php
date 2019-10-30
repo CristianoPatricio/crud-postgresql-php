@@ -94,10 +94,14 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 			$pdo = new PDO("pgsql:host=52.47.199.255; dbname=teste;", "ubuntu", "1234");
 
 			/* Instrução de consulta para paginação com PostgreSQL */
-			$sql = "SELECT username, role FROM utilizador LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+			$pdo->beginTransaction();
+
+			$sql = "SELECT username, role FROM utilizador, pg_sleep(6) LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			$stm = $pdo->prepare($sql);
 			$stm->execute();
 			$dados = $stm->fetchAll(PDO::FETCH_OBJ);
+
+			$pdo->commit();
 
 			/* Conta quantos registos existem na tabela */
 			$sqlContador = "SELECT COUNT(*) AS total_registros FROM utilizador";

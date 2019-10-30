@@ -30,15 +30,19 @@ $_SESSION['failed'] = "";
             pg_close($con);
         }
         else {
-    
+            // Begin transaction
+            pg_query("BEGIN") or die("Could not start transaction\n");
+
             $sql2 = "INSERT INTO utilizador (username,password,role) VALUES('$username','$password','$level');";
             $q1 = pg_query($con,$sql2);
     
-            if ($q1) {	
+            if ($q1) {
+                pg_query("COMMIT") or die("Transaction commit failed\n");	
                 $_SESSION['added'] = "added";
                 header('Location: profile.php');
                 pg_close($con);		
-            } else {        
+            } else { 
+                pg_query("ROLLBACK") or die("Transaction rollback failed\n");       
                 $_SESSION['failed'] = "failed"; 
                 header('Location: profile.php');
                 pg_close($con);
