@@ -2,8 +2,8 @@
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
 // If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedinAdmin'])) {
-	header('Location: index.php');
+if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) || !isset($_SESSION['loggedinUser-R'])) {
+	header('Location: login.php');
 	exit();
 }
 ?>
@@ -27,6 +27,9 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 		<div>
 			<h1>Gestão Sinistros</h1>
 			<a href="home.php"><i class="fas fa-home"></i>Home</a>
+			<a href="distritos.php"><i class="fas fa-city"></i>Distritos</a>
+			<a href="concelhos.php"><i class="fas fa-university"></i>Concelhos</a>
+			<a href="sinistros.php"><i class="fas fa-car-crash"></i>Sinistros</a>
 			<a href="profile.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
 			<a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
 		</div>
@@ -35,6 +38,19 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 		<span id="msgActions"></span>
 		<h2>Área Pessoal</h2>
 		<div>
+			<p>Detalhes da conta:</p>
+			<table>
+				<tr>
+					<td>Username:</td>
+					<td><?= $_SESSION['username'] ?></td>
+				</tr>
+				<tr>
+					<td>Permissões:</td>
+					<td><?= $_SESSION['role'] ?></td>
+				</tr>
+			</table>
+		</div>
+		<div id="adminConfigOptions">
 			<h2>Registar novo utilizador</h2> <br>
 			<form action="register.php" method="post">
 				<div class="form-row">
@@ -201,6 +217,10 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 				}
 			});
 		});
+
+		if ("<?php echo $_SESSION['role']; ?>" !== "admin") {
+			document.querySelector("#adminConfigOptions").style.display = "none";
+		}
 	</script>
 
 	<!-- MODAL EDITAR -->
@@ -216,7 +236,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 	<div class="modal fade modal" id="modalDeleteConfirmation" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
-				
+
 			</div>
 		</div>
 	</div>
