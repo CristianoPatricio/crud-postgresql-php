@@ -27,7 +27,8 @@ $_SESSION['failed'] = "";
         $lat = $_POST['lat'];
         $lon = $_POST['lon'];
 
-        
+        //Begin transaction
+        pg_query("BEGIN") or die("Could not start transaction\n");
 //CHECK IF YOUR EXISTS  
         $qry = "select * from sinistros where id_distrito = '$id_distrito' and id_concelho = '$id_concelho' and datahora like '$datahora' and mortos = '$nMortos' and feridosgraves = '$nFeridos' and quilometro = '$km' and via = '$via' and natureza = '$natureza' and latitude = '$lat' and longitude = '$lon';";
         $result = pg_query($con,$qry);
@@ -45,7 +46,8 @@ $_SESSION['failed'] = "";
             $sql2 = "INSERT INTO sinistros (id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude) VALUES('$id_distrito','$id_concelho','$datahora', '$nMortos', '$nFeridos', '$via', '$km', '$natureza', '$lat', '$lon');";
             $q1 = pg_query($con,$sql2);
     
-            if ($q1) {	
+            if ($q1) {
+                pg_query("COMMIT") or die("Transaction commit failed\n");	
                 $_SESSION['added'] = "added";
                 if ($_SESSION['role'] == "admin") { // ADMIN
                     header('Location: sinistros.php');
@@ -53,7 +55,8 @@ $_SESSION['failed'] = "";
                     header('Location: sinistros-cru.php');
                 }
                 pg_close($con);		
-            } else {        
+            } else {
+                pg_query("ROLLBACK") or die("Transaction rollback failed\n");        
                 $_SESSION['failed'] = "failed"; 
                 if ($_SESSION['role'] == "admin") { // ADMIN
                     header('Location: sinistros.php');

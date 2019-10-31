@@ -25,18 +25,25 @@ $row = pg_fetch_row($result);
 echo pg_num_rows($result);
 
 if (pg_num_rows($result) != 0) {
-    $sqlDeleteRecord = "BEGIN; DO $$ BEGIN PERFORM pg_sleep(5); END $$; DELETE FROM sinistros WHERE id_sinistro = $id_sinistro; COMMIT; END;";
+    //Begin transaction
+    pg_query("BEGIN") or die("Could not start transaction\n");
+
+    $sqlDeleteRecord = "DELETE FROM sinistros WHERE id_sinistro = $id_sinistro;";
     $q = pg_query($con,$sqlDeleteRecord);
     
     if ($q) {
+        pg_query("COMMIT") or die("Transaction commit failed\n");	
         $_SESSION['delete'] = "success";
         header('Location: sinistros.php');
         pg_close($con);
     } else {
+        pg_query("ROLLBACK") or die("Transaction rollback failed\n"); 
         $_SESSION['delete'] = "failed";
         header('Location: sinistros.php');
         pg_close($con);
     }
+} else {
+    echo "Não existe";
 }
 
 

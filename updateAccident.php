@@ -38,10 +38,13 @@ $row = pg_fetch_row($result);
 //echo pg_num_rows($result);
 
 if (pg_num_rows($result) != 0) {
+    //Begin transaction
+    pg_query("BEGIN") or die("Could not start transaction\n");
     $sqlUpdateRecord = "UPDATE sinistros SET id_distrito = '$id_distrito', id_concelho = '$id_concelho', datahora = '$datahora', mortos = '$nMortos', feridosgraves = '$nFeridos', via = '$via', quilometro = '$km', natureza = '$natureza', latitude = '$lat', longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
     $q = pg_query($con,$sqlUpdateRecord);
     
     if ($q) {
+        pg_query("COMMIT") or die("Transaction commit failed\n");	
         $_SESSION['update'] = "success";
         echo 'Success';
         if ($_SESSION['role'] == "admin") { // ADMIN
@@ -51,6 +54,7 @@ if (pg_num_rows($result) != 0) {
         }
         pg_close($con);
     } else {
+        pg_query("ROLLBACK") or die("Transaction rollback failed\n"); 
         $_SESSION['update'] = "failed";
         echo 'Failed';
         if ($_SESSION['role'] == "admin") { // ADMIN
