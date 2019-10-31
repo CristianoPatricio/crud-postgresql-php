@@ -34,7 +34,11 @@ $_SESSION['failed'] = "";
         echo pg_num_rows($result);
         if(pg_num_rows($result) > 0) {
             $_SESSION['duplicate'] = "duplicate";
-            header('Location: sinistros.php');
+            if ($_SESSION['role'] == "admin") { // ADMIN
+                header('Location: sinistros.php');
+            } else { // USER-CRU
+                header('Location: sinistros-cru.php');
+            }
             pg_close($con);
         } else {
     
@@ -43,11 +47,19 @@ $_SESSION['failed'] = "";
     
             if ($q1) {	
                 $_SESSION['added'] = "added";
-                header('Location: sinistros.php');
+                if ($_SESSION['role'] == "admin") { // ADMIN
+                    header('Location: sinistros.php');
+                } else { // USER-CRU
+                    header('Location: sinistros-cru.php');
+                }
                 pg_close($con);		
             } else {        
                 $_SESSION['failed'] = "failed"; 
-                header('Location: sinistros.php');
+                if ($_SESSION['role'] == "admin") { // ADMIN
+                    header('Location: sinistros.php');
+                } else { // USER-CRU
+                    header('Location: sinistros-cru.php');
+                }
                 pg_close($con);
             }
         }

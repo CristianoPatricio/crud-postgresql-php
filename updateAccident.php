@@ -38,18 +38,26 @@ $row = pg_fetch_row($result);
 //echo pg_num_rows($result);
 
 if (pg_num_rows($result) != 0) {
-    $sqlUpdateRecord = "BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; UPDATE sinistros SET id_distrito = '$id_distrito', id_concelho = '$id_concelho', datahora = '$datahora', mortos = '$nMortos', feridosgraves = '$nFeridos', via = '$via', quilometro = '$km', natureza = '$natureza', latitude = '$lat', longitude = '$lon' WHERE id_sinistro = $id_sinistro; COMMIT;";
+    $sqlUpdateRecord = "UPDATE sinistros SET id_distrito = '$id_distrito', id_concelho = '$id_concelho', datahora = '$datahora', mortos = '$nMortos', feridosgraves = '$nFeridos', via = '$via', quilometro = '$km', natureza = '$natureza', latitude = '$lat', longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
     $q = pg_query($con,$sqlUpdateRecord);
     
     if ($q) {
         $_SESSION['update'] = "success";
         echo 'Success';
-        header('Location: sinistros.php');
+        if ($_SESSION['role'] == "admin") { // ADMIN
+            header('Location: sinistros.php');
+        } else { // USER-CRU
+            header('Location: sinistros-cru.php');
+        }
         pg_close($con);
     } else {
         $_SESSION['update'] = "failed";
         echo 'Failed';
-        header('Location: sinistros.php');
+        if ($_SESSION['role'] == "admin") { // ADMIN
+            header('Location: sinistros.php');
+        } else { // USER-CRU
+            header('Location: sinistros-cru.php');
+        }
         pg_close($con);
     }
 } else {

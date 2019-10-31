@@ -34,14 +34,14 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 			<?php if ($_SESSION['role'] == "admin") :?> <!-- ADMIN -->
 				<a href="sinistros.php"><i class="fas fa-car-crash"></i>Sinistros</a>
 				<a href="profile.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
-			<?php else if ($_SESSION['role'] == "user_cru") :?> <!-- USER-CRU-->
+			<?php elseif ($_SESSION['role'] == "user_cru") :?> <!-- USER-CRU-->
 				<a href="sinistros-cru.php"><i class="fas fa-car-crash"></i>Sinistros</a>
 				<a href="profile-user.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
 			<?php else : ?> <!-- USER-R-->
 				<a href="sinistros-r.php"><i class="fas fa-car-crash"></i>Sinistros</a>
 				<a href="profile-user.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
 			<?php endif; ?>
-			
+
 			<a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
 		</div>
 	</nav>
