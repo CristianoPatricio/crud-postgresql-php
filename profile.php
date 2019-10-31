@@ -2,7 +2,7 @@
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
 // If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) || !isset($_SESSION['loggedinUser-R'])) {
+if (!isset($_SESSION['loggedinAdmin']) || isset($_SESSION['loggedinUser-CRU']) || isset($_SESSION['loggedinUser-R'])) {
 	header('Location: login.php');
 	exit();
 }
@@ -221,10 +221,6 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 				}
 			});
 		});
-
-		if ("<?php echo $_SESSION['role']; ?>" !== "admin") {
-			document.querySelector("#adminConfigOptions").style.display = "none";
-		}
 	</script>
 
 	<!-- MODAL EDITAR -->

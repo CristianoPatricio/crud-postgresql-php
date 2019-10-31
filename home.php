@@ -38,8 +38,19 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 			<a href="home.php"><i class="fas fa-home"></i>Home</a>
 			<a href="distritos.php"><i class="fas fa-city"></i>Distritos</a>
 			<a href="concelhos.php"><i class="fas fa-university"></i>Concelhos</a>
-			<a href="sinistros.php"><i class="fas fa-car-crash"></i>Sinistros</a>
-			<a href="profile.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
+
+			<!-- Check permissions -->
+			<?php if ($_SESSION['role'] == "admin") :?> <!-- ADMIN -->
+				<a href="sinistros.php"><i class="fas fa-car-crash"></i>Sinistros</a>
+				<a href="profile.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
+			<?php else if ($_SESSION['role'] == "user_cru") :?> <!-- USER-CRU-->
+				<a href="sinistros-cru.php"><i class="fas fa-car-crash"></i>Sinistros</a>
+				<a href="profile-user.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
+			<?php else : ?> <!-- USER-R-->
+				<a href="sinistros-r.php"><i class="fas fa-car-crash"></i>Sinistros</a>
+				<a href="profile-user.php"><i class="fas fa-user-circle"></i><?= $_SESSION['username'] ?></a>
+			<?php endif; ?>
+
 			<a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
 		</div>
 	</nav>

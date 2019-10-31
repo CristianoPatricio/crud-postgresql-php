@@ -2,7 +2,7 @@
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
 // If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) || !isset($_SESSION['loggedinUser-R'])) {
+if (!isset($_SESSION['loggedinAdmin']) || isset($_SESSION['loggedinUser-CRU']) || isset($_SESSION['loggedinUser-R'])) {
 	header('Location: login.php');
 	exit();
 }
@@ -52,6 +52,7 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 	</nav>
 	<div class="content">
 		<span id="msgActions"></span>
+		<span id="errorMessage"></span>
 		<h2>Sinistros</h2>
 		<div>
 			<h2 class="addNewAccident">Registar novo sinistro <a onclick="showRegisterDialog()" class="addNewAccident"><i class="fas fa-plus-circle fa-lg"></i></a> </h2> <br>
@@ -212,8 +213,6 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 					</div>
 				</div>
 
-
-				<span id="errorMessage"></span>
 				<button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-plus-circle"></i> Registar</button>
 			</form>
 			<script>
@@ -389,7 +388,7 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 										<td><?= $sinistro->id_sinistro ?></td>
 										<td><?= $sinistro->datahora ?></td>
 										<td><?= $sinistro->natureza ?></td>
-										<td><a href="#modalViewDetails" class="modalVerDetalhes btn btn-info" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id="<?= $sinistro->id_sinistro ?>"><i class="fas fa-search-plus"></i></a> <a class="addNewAccident modalEliminarSinistro btn btn-danger" href="#modalDeleteConfirmation" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id-sinistro="<?= $sinistro->id_sinistro ?>"><i class="fas fa-trash"></i></a> <a href="#modalUpdateSinistro" class="addNewAccident modalEditarSinistro btn btn-warning" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id-sinistro="<?= $sinistro->id_sinistro ?>" data-id-distrito="<?= $sinistro->id_distrito ?>" data-id-concelho="<?= $sinistro->id_concelho ?>" data-datahora="<?= $sinistro->datahora ?>" data-m="<?= $sinistro->mortos ?>" data-fg="<?= $sinistro->feridosgraves ?>" data-via="<?= $sinistro->via ?>" data-km="<?= $sinistro->quilometro ?>" data-natureza="<?= $sinistro->natureza ?>" data-lat="<?= $sinistro->latitude ?>" data-lon="<?= $sinistro->longitude ?>"><i class="fas fa-user-edit"></i></a></td>
+										<td><a href="#modalViewDetails" class="modalVerDetalhes btn btn-info" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id="<?= $sinistro->id_sinistro ?>"><i class="fas fa-search-plus"></i></a> <a class="botaoEliminar addNewAccident modalEliminarSinistro btn btn-danger" href="#modalDeleteConfirmation" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id-sinistro="<?= $sinistro->id_sinistro ?>"><i class="fas fa-trash"></i></a> <a href="#modalUpdateSinistro" class="botaoUpdate addNewAccident modalEditarSinistro btn btn-warning" data-toggle="modal" data-backdrop='static' data-keyboard='false' data-id-sinistro="<?= $sinistro->id_sinistro ?>" data-id-distrito="<?= $sinistro->id_distrito ?>" data-id-concelho="<?= $sinistro->id_concelho ?>" data-datahora="<?= $sinistro->datahora ?>" data-m="<?= $sinistro->mortos ?>" data-fg="<?= $sinistro->feridosgraves ?>" data-via="<?= $sinistro->via ?>" data-km="<?= $sinistro->quilometro ?>" data-natureza="<?= $sinistro->natureza ?>" data-lat="<?= $sinistro->latitude ?>" data-lon="<?= $sinistro->longitude ?>"><i class="fas fa-user-edit"></i></a></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -496,10 +495,18 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 			});
 		});
 
-		if ("<?php echo $_SESSION['role']; ?>" !== "admin") {
+		if ("<?php echo $_SESSION['role']; ?>" == "user_R") {
 			var items = document.querySelectorAll(".addNewAccident");
 
 			items.forEach(function(item) {
+				item.style.display = "none";
+			});
+		}
+		
+		if ("<?php echo $_SESSION['role']; ?>" == "user_cru") {
+			var btnDelete = document.querySelectorAll(".botaoEliminar");
+
+			btnDelete.forEach(function(item) {
 				item.style.display = "none";
 			});
 		}

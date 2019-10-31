@@ -44,12 +44,12 @@ if (pg_num_rows($result) != 0) {
     if ($q) {
         $_SESSION['update'] = "success";
         echo 'Success';
-        //header('Location: sinistros.php');
+        header('Location: sinistros.php');
         pg_close($con);
     } else {
         $_SESSION['update'] = "failed";
         echo 'Failed';
-        //header('Location: sinistros.php');
+        header('Location: sinistros.php');
         pg_close($con);
     }
 } else {
