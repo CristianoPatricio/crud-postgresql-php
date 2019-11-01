@@ -18,7 +18,7 @@ $lon = $_GET['lon'];
     </button>
 </div>
 <br>
-<form action="updateAccident.php?id=<?php echo $id_sinistro; ?>" method="post">
+<form id="formUpdate" action="updateAccident.php?id=<?php echo $id_sinistro; ?>" method="post">
     <div class="form-row">
         <div class="form-group col-md-4">
             <i class="fas fa-city grey-text"></i>
@@ -99,12 +99,12 @@ $lon = $_GET['lon'];
         <div class="form-group col-md-2">
             <i class="fas fa-skull-crossbones grey-text"></i>
             <label for="role">Nº Mortos</label>
-            <input class="form-control" type="number" name="nMortos" value="<?php echo $nMortos; ?>" min="0" max="20" />
+            <input id="inputNMortos" class="form-control" type="number" name="nMortos" value="<?php echo $nMortos; ?>" min="0" max="20" />
         </div>
         <div class="form-group col-md-2">
             <i class="fas fa-user-injured grey-text"></i>
             <label for="role">Nº F. Graves</label>
-            <input class="form-control" type="number" name="nFGraves" value="<?php echo $nFeridos; ?>" min="0" max="20" />
+            <input id="inputNFeridos" class="form-control" type="number" name="nFGraves" value="<?php echo $nFeridos; ?>" min="0" max="20" />
         </div>
         <div class="form-group col-md-2">
             <i class="fas fa-tachometer-alt grey-text"></i>
@@ -174,3 +174,45 @@ $lon = $_GET['lon'];
         <button type="submit" class="btn btn-primary">Atualizar</button>
     </div>
 </form>
+
+<script>
+    // Validação do formulário
+    $('#formUpdate').submit(function() {
+        nMortos = <?php echo $nMortos; ?>;
+        nFeridos = <?php echo $nFeridos; ?>;
+        
+        nMortosUpdate = document.querySelector("#inputNMortos").value;
+        nFeridosUpdate = document.querySelector("#inputNFeridos").value;
+
+        // Manda mensagem se o n.º de mortos for inferior ao numero apresentado 
+        if (nMortosUpdate < nMortos){
+            alert("Atenção! O n.º de mortos tem de se manter igual ou superior ao valor atual.");
+            // Repor valor
+            document.querySelector("#inputNMortos").value = nMortos;
+            return false;
+        }
+
+        // Calcula a diferença entre o n de fg atual e o n de fg p/ alteração
+        difFeridos =  nFeridos - nFeridosUpdate;
+
+        if (difFeridos > 0){
+            // Se há baixa de um FG, então tem de somar ao n de mortos
+            if (nMortosUpdate == nMortos + difFeridos) {
+                return true;
+            } else {
+                alert("Atenção! Dados inconsistentes na relação n.º mortos/n.º feridos. Verifique novamente os valores antes de continuar.");
+                // Repor valores
+                document.querySelector("#inputNMortos").value = nMortos;
+                document.querySelector("#inputNFeridos").value = nFeridos;
+                return false;
+            }
+        } else {
+            alert("Atenção! O nº de feridos graves não pode ser superior ao valor atual.");
+            // Repor valor
+            document.querySelector("#inputNFeridos").value = nFeridos;
+            return false;
+        }
+
+        return true;
+    });
+</script>
