@@ -29,6 +29,7 @@ $_SESSION['failed'] = "";
 
         //Begin transaction
         pg_query("BEGIN") or die("Could not start transaction\n");
+        pg_query("LOCK TABLE sinistros IN SHARE MODE;");
 //CHECK IF YOUR EXISTS  
         $qry = "select * from sinistros where id_distrito = '$id_distrito' and id_concelho = '$id_concelho' and datahora like '$datahora' and mortos = '$nMortos' and feridosgraves = '$nFeridos' and quilometro = '$km' and via = '$via' and natureza = '$natureza' and latitude = '$lat' and longitude = '$lon';";
         $result = pg_query($con,$qry);

@@ -241,6 +241,8 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			$pdo = new PDO("pgsql:host=52.47.199.255; dbname=teste;", "ubuntu", "1234");
 
 			/* Instrução de consulta para paginação com PostgreSQL */
+			$pdo->beginTransaction();
+
 			if ((!(isset($_GET['dataInicio'])) || !(isset($_GET['dataFim']))) || $_GET['dataInicio'] == null || $_GET['dataFim'] == null) {
 				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			} else {
@@ -299,6 +301,8 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			$stm = $pdo->prepare($sqlContador);
 			$stm->execute();
 			$valor = $stm->fetch(PDO::FETCH_OBJ);
+
+			$pdo->commit();
 
 			/* Idêntifica a primeira página */
 			$primeira_pagina = 1;

@@ -195,7 +195,7 @@ $lon = $_GET['lon'];
         // Calcula a diferença entre o n de fg atual e o n de fg p/ alteração
         difFeridos =  nFeridos - nFeridosUpdate;
 
-        if (difFeridos > 0){
+        if (difFeridos >= 0){
             // Se há baixa de um FG, então tem de somar ao n de mortos
             if (nMortosUpdate == nMortos + difFeridos) {
                 return true;

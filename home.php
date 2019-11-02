@@ -75,12 +75,19 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 			echo "An error occurred.\n";
 			exit;
 		}
+
+		//Transação
+		pg_query("BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE") or die("Could not start transaction\n");
+
 		// get all the uid from the uid column in users
 		$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
 		if (!$result) {
+			pg_query("ROLLBACK") or die("Transaction rollback failed\n"); 
 			// error message  
 			echo "An error occurred.\n";
 			exit;
+		} else {
+			pg_query("COMMIT") or die("Transaction commit failed\n");
 		}
 		?>
 		<h2>Sinistralidade Rodoviária: 2004 a 2017</h2>

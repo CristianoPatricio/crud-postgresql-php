@@ -39,7 +39,10 @@ $row = pg_fetch_row($result);
 
 if (pg_num_rows($result) != 0) {
     //Begin transaction
-    pg_query("BEGIN") or die("Could not start transaction\n");
+    pg_query("BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;") or die("Could not start transaction\n");
+    pg_query("LOCK TABLE sinistros IN SHARE ROW EXCLUSIVE MODE;");
+    pg_query("select pg_sleep(6);");
+    
     $sqlUpdateRecord = "UPDATE sinistros SET id_distrito = '$id_distrito', id_concelho = '$id_concelho', datahora = '$datahora', mortos = '$nMortos', feridosgraves = '$nFeridos', via = '$via', quilometro = '$km', natureza = '$natureza', latitude = '$lat', longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
     $q = pg_query($con,$sqlUpdateRecord);
     

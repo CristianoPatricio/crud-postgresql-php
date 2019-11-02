@@ -27,6 +27,7 @@ echo pg_num_rows($result);
 if (pg_num_rows($result) != 0) {
     //Begin transaction
     pg_query("BEGIN") or die("Could not start transaction\n");
+    pg_query("LOCK TABLE sinistros IN SHARE ROW EXCLUSIVE MODE;");
 
     $sqlDeleteRecord = "DELETE FROM sinistros WHERE id_sinistro = $id_sinistro;";
     $q = pg_query($con,$sqlDeleteRecord);
