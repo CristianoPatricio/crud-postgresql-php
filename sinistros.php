@@ -371,8 +371,19 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 							$('#input-picker-finalDate').datetimepicker();
 						});
 					</script>
+					<button id="btnLimpar" type="button" class="btn btn-danger" style="height: 38px;margin-left: 450px;"><i class="fas fa-broom"></i> Limpar</button>
 				</div>
 			</form>
+			<script>
+				var btnLimpar = document.querySelector("#btnLimpar");
+
+				btnLimpar.addEventListener('click', function(){
+					// Reset aos campos da data
+					$('#input-picker-initialDate').val("");
+					$('#input-picker-finalDate').val("");
+				});
+
+			</script>
 			<hr>
 			<div class='container'>
 				<div class="row">

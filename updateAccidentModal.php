@@ -23,7 +23,7 @@ $lon = $_GET['lon'];
         <div class="form-group col-md-4">
             <i class="fas fa-city grey-text"></i>
             <label for="role">Distrito</label>
-            <select class="form-control" id="selectListDistritos" name="distrito" required>
+            <select class="form-control" id="selectListDistritos" name="distrito" required disabled>
                 <script>
                     var itemSelectedDistritos = "<?php echo $id_distrito; ?>";
                     document.getElementById("selectListDistritos").selectedIndex = itemSelectedDistritos;                   
@@ -52,7 +52,7 @@ $lon = $_GET['lon'];
         <div class="form-group col-md-4">
             <i class="fas fa-university grey-text"></i>
             <label for="role"> Concelho </label>
-            <select class="form-control" name="concelho" id="selectListConcelhos">
+            <select class="form-control" name="concelho" id="selectListConcelhos" disabled>
                 <script>
                     var itemSelectedConcelhos = "<?php echo $id_concelho; ?>";
                     document.getElementById("selectListConcelhos").selectedIndex = itemSelectedConcelho;                   
@@ -80,7 +80,7 @@ $lon = $_GET['lon'];
             <i class="fas fa-calendar grey-text"></i>
             <label for="role"> Data/Hora </label>
             <div class='input-group date' id='datetimepicker1'>
-                <input name="datahora" type='text' class="form-control" value="<?php echo $datahora; ?>" id="input-picker" />
+                <input name="datahora" type='text' class="form-control" value="<?php echo $datahora; ?>" id="input-picker" readonly />
             </div>
         </div>
         <script type="text/javascript">
@@ -114,7 +114,7 @@ $lon = $_GET['lon'];
         <div class="form-group col-md-6">
             <i class="fas fa-road grey-text"></i>
             <label for="role">Via</label>
-            <select class="form-control" name="via" id="selectListVias">
+            <select class="form-control" name="via" id="selectListVias" disabled>
                 <script>
                     var itemSelectedVias = "<?php echo $via; ?>";
                     document.getElementById("selectListVias").value = itemSelectedVias;                   
@@ -138,7 +138,7 @@ $lon = $_GET['lon'];
         <div class="form-group col-md-6">
             <i class="fas fa-car-crash grey-text"></i>
             <label for="role">Natureza</label>
-            <select class="form-control" name="natureza" id="selectListNatureza" required>
+            <select class="form-control" name="natureza" id="selectListNatureza" required disabled>
                 <script>
                     var itemSelectedNatureza = "<?php echo $natureza; ?>";
                     document.getElementById("selectListNatureza").value = itemSelectedNatureza;                   

@@ -96,7 +96,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			/* Instrução de consulta para paginação com PostgreSQL */
 			$pdo->beginTransaction();
 
-			$sql = "SELECT username, role FROM utilizador, pg_sleep(6) LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+			$sql = "SELECT username, role FROM utilizador LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			$stm = $pdo->prepare($sql);
 			$stm->execute();
 			$dados = $stm->fetchAll(PDO::FETCH_OBJ);

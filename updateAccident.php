@@ -32,20 +32,58 @@ if(isset($_GET["id"]))
     $lat = $_POST['lat'];
     $lon = $_POST['lon'];
 
-$qry = "select * from sinistros where id_sinistro = '$id_sinistro';";
+$qry = "select mortos, feridosgraves, quilometro, latitude, longitude from sinistros where id_sinistro = '$id_sinistro';";
 $result = pg_query($con,$qry);
 $row = pg_fetch_row($result);
-//echo pg_num_rows($result);
+
+// Valores atuais
+$nMortosNow = $row[0];
+$nFeridosNow = $row[1];
+$kmNow = $row[2];
+$latNow = $row[3];
+$lonNow =$row[4];
+
+// Comparação de valores
+if ($nMortos != $nMortosNow){
+    // Foi feito um update aos mortos e feridos
+    $updateMFG = TRUE;
+}
+
+if ($km != $kmNow) {
+    // Foi feito um update aos km
+    $updateKm = TRUE;
+}
+
+if ($latNow != $lat) {
+    // Foi feito um update à latitude
+    $updatelat = TRUE;
+}
+
+if ($lonNow != $lon){
+    // Foi feito um update à longitute
+    $updatelon = TRUE;
+}
 
 if (pg_num_rows($result) != 0) {
     //Begin transaction
-    pg_query("BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;") or die("Could not start transaction\n");
+    pg_query("BEGIN") or die("Could not start transaction\n");
     pg_query("LOCK TABLE sinistros IN SHARE ROW EXCLUSIVE MODE;");
-    pg_query("select pg_sleep(6);");
     
-    $sqlUpdateRecord = "UPDATE sinistros SET id_distrito = '$id_distrito', id_concelho = '$id_concelho', datahora = '$datahora', mortos = '$nMortos', feridosgraves = '$nFeridos', via = '$via', quilometro = '$km', natureza = '$natureza', latitude = '$lat', longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
+    // Update mortos e fg
+    if ($updateMFG) $sqlUpdateRecord = "UPDATE sinistros SET mortos = '$nMortos', feridosgraves = '$nFeridos' WHERE id_sinistro = $id_sinistro;";
+
+    // Update quilometros
+    if ($updateKm) $sqlUpdateRecord = "UPDATE sinistros SET quilometro = '$km' WHERE id_sinistro = $id_sinistro;";
+    
+    // Update latitude
+    if ($updatelat) $sqlUpdateRecord = "UPDATE sinistros SET latitude = '$lat' WHERE id_sinistro = $id_sinistro;";
+    
+    // Update longitude
+    if ($updatelon) $sqlUpdateRecord = "UPDATE sinistros SET longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
+    
     $q = pg_query($con,$sqlUpdateRecord);
-    
+    pg_query("select pg_sleep(6);");
+
     if ($q) {
         pg_query("COMMIT") or die("Transaction commit failed\n");	
         $_SESSION['update'] = "success";
