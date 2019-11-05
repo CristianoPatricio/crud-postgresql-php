@@ -37,6 +37,9 @@ echo pg_num_rows($result);
 
 
 if (pg_num_rows($result) != 0) {
+    //Begin transaction
+    pg_query("BEGIN") or die("Could not start transaction\n");
+
     $sqlUpdateRecord = "";
     if ($pass != 0 ) {
         $sqlUpdateRecord = "UPDATE utilizador SET username = '$username', password = '$password', role = '$role' WHERE id = $id_user;";
@@ -45,13 +48,16 @@ if (pg_num_rows($result) != 0) {
     }
 
     $q = pg_query($con,$sqlUpdateRecord);
+    pg_query("SELECT pg_sleep(3);");
     
     if ($q) {
+        pg_query("COMMIT") or die("Transaction commit failed\n");
         $_SESSION['update'] = "success";
         //echo 'Success';
         header('Location: profile.php');
         pg_close($con);
     } else {
+        pg_query("ROLLBACK") or die("Transaction rollback failed\n"); 
         $_SESSION['update'] = "failed";
         //echo 'Failed';
         header('Location: profile.php');

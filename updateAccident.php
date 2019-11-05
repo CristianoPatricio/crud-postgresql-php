@@ -12,14 +12,13 @@ $con = pg_connect("host=$host dbname=$db user=$user password=$pass")
 or die ("Could not connect to server\n");
 
 $_SESSION['update'] = "";
+$_SESSION['notFound'] = "";
 $pass = 1;
 
 if(isset($_GET["id"]))
 {
     $id_sinistro = $_GET["id"];
 }
-
-
     // GET VARIABLES DATA
     $id_distrito = $_POST['distrito'];
     $id_concelho = $_POST['concelho']; 
@@ -82,7 +81,7 @@ if (pg_num_rows($result) != 0) {
     if ($updatelon) $sqlUpdateRecord = "UPDATE sinistros SET longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
     
     $q = pg_query($con,$sqlUpdateRecord);
-    pg_query("select pg_sleep(6);");
+    pg_query("SELECT pg_sleep(3);");
 
     if ($q) {
         pg_query("COMMIT") or die("Transaction commit failed\n");	
@@ -106,7 +105,13 @@ if (pg_num_rows($result) != 0) {
         pg_close($con);
     }
 } else {
-    echo 'Não existe';
+    $_SESSION['notFound'] = "notFound";
+    if ($_SESSION['role'] == "admin") { // ADMIN
+        header('Location: sinistros.php');
+    } else { // USER-CRU
+        header('Location: sinistros-cru.php');
+    }
+    pg_close($con);
 }
 
 ?>

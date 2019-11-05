@@ -102,16 +102,16 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 				<div class="form-group col-md-2">
 					<i class="fas fa-calendar grey-text"></i>
 					<label for="role">Ano</label>
-					<select class="form-control" id="selectListAno" name="ano" >
+					<select class="form-control" id="selectListAno" name="ano">
 						<option value="">Selecione...</option>
 						<?php
-							for($i = 2004; $i <= 2020; $i++) {
-								echo '<option value="' . $i . '">' . $i . '</option>';
-							}
+						for ($i = 2004; $i <= 2020; $i++) {
+							echo '<option value="' . $i . '">' . $i . '</option>';
+						}
 						?>
 					</select>
 				</div>
-				<button type="submit" class="btn btn-primary"  style="height: 38px; margin-top:32px;"><i class="fas fa-search-plus"></i> Pesquisar</button>
+				<button type="submit" class="btn btn-primary" style="height: 38px; margin-top:32px;"><i class="fas fa-search-plus"></i> Pesquisar</button>
 				<button id="btnLimpar" type="button" class="btn btn-danger" style="height: 38px; margin-left: 355px;"><i class="fas fa-broom"></i> Limpar</button>
 			</div>
 		</form>
@@ -122,11 +122,11 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 
 			var btnLimpar = document.querySelector("#btnLimpar");
 
-				btnLimpar.addEventListener('click', function(){
-					// Reset aos campos da data
-					$('#selectListDistritos').val("");
-					$('#selectListAno').val("");
-				});
+			btnLimpar.addEventListener('click', function() {
+				// Reset aos campos da data
+				$('#selectListDistritos').val("");
+				$('#selectListAno').val("");
+			});
 		</script>
 		<?php
 		// connect to database
@@ -140,19 +140,23 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 		pg_query("BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE") or die("Could not start transaction\n");
 
 		// Se as variáveis de pesquisa estão definidas
-		if (isset($_GET['distrito']) && $_GET['distrito'] != null){
+		if (isset($_GET['distrito']) && $_GET['distrito'] != null) {
 			$id_distrito = $_GET['distrito'];
 			if (isset($_GET['ano']) && $_GET['ano'] != null) {
 				$ano = $_GET['ano'];
-				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' AND distritos.id_distrito = $id_distrito  GROUP BY nome_distrito ORDER BY nome_distrito");	
+				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' AND distritos.id_distrito = $id_distrito  GROUP BY nome_distrito ORDER BY nome_distrito");
+				$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros where datahora LIKE '%$ano%' AND sinistros.id_distrito = $id_distrito AND via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 			} else {
-				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito AND distritos.id_distrito = $id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
+				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito AND distritos.id_distrito = $id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
+				$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros where sinistros.id_distrito = $id_distrito AND via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 			}
-		} else if (isset($_GET['ano']) && $_GET['ano'] != null){
+		} else if (isset($_GET['ano']) && $_GET['ano'] != null) {
 			$ano = $_GET['ano'];
-			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' GROUP BY nome_distrito ORDER BY nome_distrito");
-		} else if (!isset($_GET['distrito']) || !isset($_GET['ano']) || $_GET['distrito'] == null || $_GET['ano'] == null){
-			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
+			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' GROUP BY nome_distrito ORDER BY nome_distrito");
+			$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros where datahora LIKE '%$ano%' AND via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
+		} else if (!isset($_GET['distrito']) || !isset($_GET['ano']) || $_GET['distrito'] == null || $_GET['ano'] == null) {
+			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
+			$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros WHERE via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 		}
 
 		if (!$result) {
@@ -163,8 +167,24 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 		} else {
 			pg_query("COMMIT") or die("Transaction commit failed\n");
 		}
+
+		if ($viaNegra) {
+			pg_query("COMMIT") or die("Transaction commit failed\n");
+		} else {
+			pg_query("ROLLBACK") or die("Transaction rollback failed\n");
+			// error message  
+			echo "An error occurred.\n";
+			exit;
+		}
+
+		$resultViaNegra = pg_fetch_row($viaNegra);
+
+		$totalAcidentes = $resultViaNegra[1];
+		$viaAcidentes = $resultViaNegra[0];
 		?>
 		<div class='container'>
+		<h2><span>Via com mais acidentes: </span><span><b><?php echo $viaAcidentes; ?></b></span> | <span>Total acidentes: </span><span><b><?php echo $totalAcidentes; ?></b></span></h2>
+		<br>
 			<div class="row">
 				<table class="table table-striped table-bordered" id="statisticsTable">
 					<thead>

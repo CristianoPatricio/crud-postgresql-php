@@ -22,18 +22,25 @@ $qry = "select id from utilizador where username LIKE '$username';";
 $result = pg_query($con,$qry);
 $row = pg_fetch_row($result);
 $id_user = $row[0];
-echo $id_user;
+//echo $id_user;
 
 if (pg_num_rows($result) != 0) {
+    //Begin transaction
+    pg_query("BEGIN") or die("Could not start transaction\n");
+    pg_query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
+
     $sqlDeleteRecord = "DELETE FROM utilizador WHERE id = $id_user;";
     $q = pg_query($con,$sqlDeleteRecord);
     
     if ($q) {
+        pg_query("COMMIT") or die("Transaction commit failed\n");
         $_SESSION['delete'] = "success";
         header('Location: profile.php');
         pg_close($con);
     } else {
+        pg_query("ROLLBACK") or die("Transaction rollback failed\n"); 
         $_SESSION['delete'] = "failed";
+        //echo $_SESSION['delete'];
         header('Location: profile.php');
         pg_close($con);
     }

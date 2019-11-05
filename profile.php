@@ -189,10 +189,13 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			<?php $_SESSION['failed'] = ""; ?>
 		}
 
-		if ("<? echo $_SESSION['delete']; ?>" === "success") {
+		if ("<? echo $_SESSION['delete']; ?>" === "failed"){
+			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Erro ao eliminar utilizador! O registo poderá estar a ser utilizado... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			
+		} else if ("<? echo $_SESSION['delete']; ?>" === "success") {
 			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['delete'] = ""; ?>
 		}
+		<?php $_SESSION['delete'] = ""; ?>
 
 		if ("<? echo $_SESSION['update']; ?>" === "success") {
 			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';

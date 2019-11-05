@@ -55,7 +55,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 		<span id="errorMessage"></span>
 		<h2>Sinistros</h2>
 		<div>
-			<h2 class="addNewAccident">Registar novo sinistro <a onclick="showRegisterDialog()" class="addNewAccident"><i class="fas fa-plus-circle fa-lg"></i></a> </h2> <br>
+			<h2 class="addNewAccident">Registar novo sinistro <a href="#" onclick="showRegisterDialog()" class="addNewAccident"><i id="iconNovoRegisto" class="fas fa-plus-circle fa-lg"></i></a> </h2> <br>
 			<form action="addNewAccident.php" method="post" style="background-color: #e3e8e5; padding: 10px; border-radius: 5px; display: none;" id="addNewAccidentForm">
 				<div class="form-row">
 					<div class="form-group col-md-4">
@@ -147,12 +147,12 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 					<div class="form-group col-md-2">
 						<i class="fas fa-skull-crossbones grey-text"></i>
 						<label for="role">Nº Mortos</label>
-						<input class="form-control" type="number" name="nMortos" value="0" min="0" max="20" />
+						<input id="nMortos" class="form-control" type="number" name="nMortos" value="0" min="0" max="20" />
 					</div>
 					<div class="form-group col-md-2">
 						<i class="fas fa-user-injured grey-text"></i>
 						<label for="role">Nº F. Graves</label>
-						<input class="form-control" type="number" name="nFGraves" value="0" min="0" max="20" />
+						<input id="nFG" class="form-control" type="number" name="nFGraves" value="0" min="0" max="20" />
 					</div>
 					<div class="form-group col-md-2">
 						<i class="fas fa-tachometer-alt grey-text"></i>
@@ -220,10 +220,31 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 					var $dialog = document.querySelector("#addNewAccidentForm");
 					if ($dialog.style.display === "none") {
 						$dialog.style.display = "block";
+						$("#iconNovoRegisto").removeClass("fa-plus-circle");
+						$("#iconNovoRegisto").addClass("fa-minus-circle");
 					} else {
 						$dialog.style.display = "none";
+						$("#iconNovoRegisto").removeClass("fa-minus-circle");
+						$("#iconNovoRegisto").addClass("fa-plus-circle");
 					}
 				}
+
+			
+				// Validação do formulário
+				$('#addNewAccidentForm').submit(function() {
+					var nMortos = document.querySelector("#nMortos").value;
+					var nFeridosGraves = document.querySelector("#nFG").value;
+
+					// Check if mortos and feridosgraves = 0
+					if (nMortos == 0 && nFeridosGraves == 0){
+						alert("Atenção! Valor 0 nos campos N.º de Mortos e N.º de Feridos Graves.");
+						return false;
+					} else {
+						return true;
+					}
+				});
+
+
 			</script>
 			<br>
 			<?php
@@ -244,7 +265,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			$pdo->beginTransaction();
 
 			if ((!(isset($_GET['dataInicio'])) || !(isset($_GET['dataFim']))) || $_GET['dataInicio'] == null || $_GET['dataFim'] == null) {
-				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros, pg_sleep(3) ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			} else {
 				$dataInicio = $_GET['dataInicio'];
 				$dataFim = $_GET['dataFim'];
@@ -264,14 +285,14 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 				$con = pg_connect("host=52.47.199.255 dbname=teste user=ubuntu password=1234");
 				//echo $dataInicio; echo " | "; echo "$dataInicioRevert"; echo " | "; echo $dataFim; echo " | "; echo $dataFimRevert;
 
-				$qry1 = "SELECT id_sinistro FROM sinistros WHERE datahora like '%$dataInicio%' or datahora like '%$dataInicioRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
+				$qry1 = "SELECT id_sinistro FROM sinistros, pg_sleep(3) WHERE datahora like '%$dataInicio%' or datahora like '%$dataInicioRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
 				$result = pg_query($con, $qry1);
 				$row = pg_fetch_row($result);
 				$id_sinistro_inicial = $row[0];
 				//echo $id_sinistro_inicial;
 				//echo " \ ";
 
-				$qry2 = "SELECT id_sinistro FROM sinistros WHERE datahora like '%$dataFim%' or datahora like '%$dataFimRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
+				$qry2 = "SELECT id_sinistro FROM sinistros, pg_sleep(3) WHERE datahora like '%$dataFim%' or datahora like '%$dataFimRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
 				$result1 = pg_query($con, $qry2);
 				$row1 = pg_fetch_row($result1);
 				$id_sinistro_final = $row1[0];
@@ -283,7 +304,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 					$id_sinistro_inicial = $id_final;
 				}
 
-				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros WHERE id_sinistro >= $id_sinistro_inicial AND id_sinistro <= $id_sinistro_final ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros, pg_sleep(3) WHERE id_sinistro >= $id_sinistro_inicial AND id_sinistro <= $id_sinistro_final ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			}
 
 			//echo $sql;
@@ -446,27 +467,6 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 		</div>
 	</div>
 	<script>
-		if ("<?php echo $_SESSION['duplicate']; ?>" === "duplicate") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O registo já existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['duplicate'] = ""; ?>
-		} else if ("<?php echo $_SESSION['added']; ?>" === "added") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo inserido com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['added'] = ""; ?>
-		} else if ("<?php echo $_SESSION['failed']; ?>" === "failed") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Ups! Erro ao inserir sinistro... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['failed'] = ""; ?>
-		}
-
-		if ("<? echo $_SESSION['delete']; ?>" === "success") {
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['delete'] = ""; ?>
-		}
-
-		if ("<? echo $_SESSION['update']; ?>" === "success") {
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['update'] = ""; ?>
-		}
-
 		$('.modalEditarSinistro').click(function() {
 			var id_sinistro = $(this).attr('data-id-sinistro');
 			var id_distrito = $(this).attr('data-id-distrito');
@@ -510,21 +510,37 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			});
 		});
 
-		if ("<?php echo $_SESSION['role']; ?>" == "user_R") {
-			var items = document.querySelectorAll(".addNewAccident");
+		// Test if SESSION Variables are SET
 
-			items.forEach(function(item) {
-				item.style.display = "none";
-			});
-		}
-		
-		if ("<?php echo $_SESSION['role']; ?>" == "user_cru") {
-			var btnDelete = document.querySelectorAll(".botaoEliminar");
+		<?php if (isset($_SESSION['duplicate']) || isset($_SESSION['added']) || isset($_SESSION['failed'])) { ?>
+			if ("<?php echo $_SESSION['duplicate']; ?>" === "duplicate") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O registo já existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['duplicate'] = ""; ?>
+			} else if ("<?php echo $_SESSION['added']; ?>" === "added") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo inserido com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['added'] = ""; ?>
+			} else if ("<?php echo $_SESSION['failed']; ?>" === "failed") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Ups! Erro ao inserir sinistro... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['failed'] = ""; ?>
+			}
+		<?php } ?>
 
-			btnDelete.forEach(function(item) {
-				item.style.display = "none";
-			});
-		}
+		<?php if (isset($_SESSION['delete']) || isset($_SESSION['update']) || isset($_SESSION['notFound'])) { ?>
+			if ("<?php echo $_SESSION['delete']; ?>" === "success") {
+				document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['delete'] = ""; ?>
+			}
+
+			if ("<?php echo $_SESSION['update']; ?>" === "success") {
+				document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Registo atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['update'] = ""; ?>
+			}
+
+			if ("<?php echo $_SESSION['notFound']; ?>" === "notFound") {
+				document.querySelector("#msgActions").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O registo que pretende atualizar já não existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['notFound'] = ""; ?>
+			}
+		<?php } ?>
 	</script>
 
 	<!-- MODAL EDITAR -->

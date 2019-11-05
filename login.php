@@ -30,8 +30,10 @@ session_start();
 	</body>
 	<script>
 		// if the session variable === 'failed' then show div with error message
-		if ("<?php echo $_SESSION['loggedinAdmin']; ?>" === "failed") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-danger" role="alert" style="width: 350px; text-align:center; margin:auto;"> Incorrect username or password! </div>';
-		}
+		<?php if (isset($_SESSION['loggedinAdmin'])) : ?>
+			if ("<?php echo $_SESSION['loggedinAdmin']; ?>" === "failed") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-danger" role="alert" style="width: 350px; text-align:center; margin:auto;"> Incorrect username or password! </div>';
+			}
+		<?php endif; ?>
 	</script>
 </html>
