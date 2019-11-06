@@ -285,7 +285,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 				$con = pg_connect("host=52.47.199.255 dbname=teste user=ubuntu password=1234");
 				//echo $dataInicio; echo " | "; echo "$dataInicioRevert"; echo " | "; echo $dataFim; echo " | "; echo $dataFimRevert;
 
-				$qry1 = "SELECT id_sinistro FROM sinistros, pg_sleep(3) WHERE datahora like '%$dataInicio%' or datahora like '%$dataInicioRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
+				$qry1 = "SELECT id_sinistro FROM sinistros, pg_sleep(3) WHERE datahora like '%$dataInicio%' or datahora like '%$dataInicioRevert%' ORDER BY id_sinistro LIMIT 1;";
 				$result = pg_query($con, $qry1);
 				$row = pg_fetch_row($result);
 				$id_sinistro_inicial = $row[0];
@@ -304,7 +304,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 					$id_sinistro_inicial = $id_final;
 				}
 
-				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros, pg_sleep(3) WHERE id_sinistro >= $id_sinistro_inicial AND id_sinistro <= $id_sinistro_final ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros, pg_sleep(3) WHERE id_sinistro >= $id_sinistro_inicial AND id_sinistro <= $id_sinistro_final ORDER BY id_sinistro LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			}
 
 			//echo $sql;
@@ -328,26 +328,28 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			/* Idêntifica a primeira página */
 			$primeira_pagina = 1;
 
-			/* Cálcula qual será a última página */
-			$ultima_pagina  = ceil($valor->total_registros / QTDE_REGISTROS);
+			if (!empty($dados)) {
+				/* Cálcula qual será a última página */
+				$ultima_pagina  = ceil($valor->total_registros / QTDE_REGISTROS);
 
-			/* Cálcula qual será a página anterior em relação a página atual em exibição */
-			$pagina_anterior = ($pagina_atual > 1) ? $pagina_atual - 1 : 0;
+				/* Cálcula qual será a página anterior em relação a página atual em exibição */
+				$pagina_anterior = ($pagina_atual > 1) ? $pagina_atual - 1 : 0;
 
-			/* Cálcula qual será a pŕoxima página em relação a página atual em exibição */
-			$proxima_pagina = ($pagina_atual < $ultima_pagina) ? $pagina_atual + 1 : 0;
+				/* Cálcula qual será a pŕoxima página em relação a página atual em exibição */
+				$proxima_pagina = ($pagina_atual < $ultima_pagina) ? $pagina_atual + 1 : 0;
 
-			/* Cálcula qual será a página inicial do nosso range */
-			$range_inicial  = (($pagina_atual - RANGE_PAGINAS) >= 1) ? $pagina_atual - RANGE_PAGINAS : 1;
+				/* Cálcula qual será a página inicial do nosso range */
+				$range_inicial  = (($pagina_atual - RANGE_PAGINAS) >= 1) ? $pagina_atual - RANGE_PAGINAS : 1;
 
-			/* Cálcula qual será a página final do nosso range */
-			$range_final   = (($pagina_atual + RANGE_PAGINAS) <= $ultima_pagina) ? $pagina_atual + RANGE_PAGINAS : $ultima_pagina;
+				/* Cálcula qual será a página final do nosso range */
+				$range_final   = (($pagina_atual + RANGE_PAGINAS) <= $ultima_pagina) ? $pagina_atual + RANGE_PAGINAS : $ultima_pagina;
 
-			/* Verifica se vai exibir o botão "Primeiro" e "Pŕoximo" */
-			$exibir_botao_inicio = ($range_inicial < $pagina_atual) ? 'mostrar' : 'esconder';
+				/* Verifica se vai exibir o botão "Primeiro" e "Pŕoximo" */
+				$exibir_botao_inicio = ($range_inicial < $pagina_atual) ? 'mostrar' : 'esconder';
 
-			/* Verifica se vai exibir o botão "Anterior" e "Último" */
-			$exibir_botao_final = ($range_final > $pagina_atual) ? 'mostrar' : 'esconder';
+				/* Verifica se vai exibir o botão "Anterior" e "Último" */
+				$exibir_botao_final = ($range_final > $pagina_atual) ? 'mostrar' : 'esconder';
+			}
 
 			?>
 			<h5 style="color:#4a536e;">Filtrar resultados...</h5>
@@ -396,6 +398,12 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 				</div>
 			</form>
 			<script>
+
+				<?php if (isset($_GET['dataInicio']) && isset($_GET['dataFim'])) :?>
+					$('#input-picker-initialDate').val('<?php echo $_GET['dataInicio']; ?>');
+					$('#input-picker-finalDate').val('<?php echo $_GET['dataFim']; ?>');
+				<?php endif; ?>
+
 				var btnLimpar = document.querySelector("#btnLimpar");
 
 				btnLimpar.addEventListener('click', function(){
@@ -403,7 +411,6 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 					$('#input-picker-initialDate').val("");
 					$('#input-picker-finalDate').val("");
 				});
-
 			</script>
 			<hr>
 			<div class='container'>
