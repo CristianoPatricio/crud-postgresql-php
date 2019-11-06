@@ -42,11 +42,11 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			<table>
 				<tr>
 					<td>Username:</td>
-					<td><?= $_SESSION['username'] ?></td>
+					<td class="text-left"><?= $_SESSION['username'] ?></td>
 				</tr>
 				<tr>
 					<td>Permissões:</td>
-					<td><?= $_SESSION['role'] ?></td>
+					<td>Administrador</td>
 				</tr>
 			</table>
 		</div>

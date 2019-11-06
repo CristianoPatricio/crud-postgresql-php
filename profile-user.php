@@ -53,11 +53,15 @@ if (!isset($_SESSION['loggedinAdmin']) || !isset($_SESSION['loggedinUser-CRU']) 
 			<table>
 				<tr>
 					<td>Username:</td>
-					<td><?= $_SESSION['username'] ?></td>
+					<td class="text-left"><?= $_SESSION['username'] ?></td>
 				</tr>
 				<tr>
 					<td>Permissões:</td>
-					<td><?= $_SESSION['role'] ?></td>
+					<?php if ($_SESSION['role'] == "user_R"): ?>
+						<td>Consultar dados relativos a sinistros.</td>
+					<?php else : ?> <!-- USER_CRU -->
+						<td>Consultar, Inserir e Editar dados relativos a sinistros.</td>
+					<?php endif;?>
 				</tr>
 			</table>
 		</div>
