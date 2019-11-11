@@ -81,7 +81,7 @@ if (pg_num_rows($result) != 0) {
     if ($updatelon) $sqlUpdateRecord = "UPDATE sinistros SET longitude = '$lon' WHERE id_sinistro = $id_sinistro;";
     
     $q = pg_query($con,$sqlUpdateRecord);
-    pg_query("SELECT pg_sleep(3);");
+    //pg_query("SELECT pg_sleep(3);");
 
     if ($q) {
         pg_query("COMMIT") or die("Transaction commit failed\n");	

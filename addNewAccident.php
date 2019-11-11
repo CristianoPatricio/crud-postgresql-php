@@ -46,7 +46,7 @@ $_SESSION['failed'] = "";
     
             $sql2 = "INSERT INTO sinistros (id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude) VALUES('$id_distrito','$id_concelho','$datahora', '$nMortos', '$nFeridos', '$via', '$km', '$natureza', '$lat', '$lon');";
             $q1 = pg_query($con,$sql2);
-            pg_query("SELECT pg_sleep(3);");
+            //pg_query("SELECT pg_sleep(3);");
     
             if ($q1) {
                 pg_query("COMMIT") or die("Transaction commit failed\n");	

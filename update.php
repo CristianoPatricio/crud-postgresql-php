@@ -48,7 +48,7 @@ if (pg_num_rows($result) != 0) {
     }
 
     $q = pg_query($con,$sqlUpdateRecord);
-    pg_query("SELECT pg_sleep(3);");
+    //pg_query("SELECT pg_sleep(3);");
     
     if ($q) {
         pg_query("COMMIT") or die("Transaction commit failed\n");

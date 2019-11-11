@@ -144,18 +144,18 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 			$id_distrito = $_GET['distrito'];
 			if (isset($_GET['ano']) && $_GET['ano'] != null) {
 				$ano = $_GET['ano'];
-				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' AND distritos.id_distrito = $id_distrito  GROUP BY nome_distrito ORDER BY nome_distrito");
+				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' AND distritos.id_distrito = $id_distrito  GROUP BY nome_distrito ORDER BY nome_distrito");
 				$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros where datahora LIKE '%$ano%' AND sinistros.id_distrito = $id_distrito AND via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 			} else {
-				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito AND distritos.id_distrito = $id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
+				$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito AND distritos.id_distrito = $id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
 				$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros where sinistros.id_distrito = $id_distrito AND via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 			}
 		} else if (isset($_GET['ano']) && $_GET['ano'] != null) {
 			$ano = $_GET['ano'];
-			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' GROUP BY nome_distrito ORDER BY nome_distrito");
+			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito AND datahora LIKE '%$ano%' GROUP BY nome_distrito ORDER BY nome_distrito");
 			$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros where datahora LIKE '%$ano%' AND via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 		} else if (!isset($_GET['distrito']) || !isset($_GET['ano']) || $_GET['distrito'] == null || $_GET['ano'] == null) {
-			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos, pg_sleep(3) WHERE sinistros.id_distrito = distritos.id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
+			$result = pg_query($conn, "SELECT nome_distrito, count(sinistros) AS nSinistros, SUM(mortos) AS nMortos, SUM(feridosgraves) AS nFG FROM sinistros, distritos WHERE sinistros.id_distrito = distritos.id_distrito GROUP BY nome_distrito ORDER BY nome_distrito");
 			$viaNegra = pg_query($conn, "SELECT via, count(via) from sinistros WHERE via <> '-' AND via <> 'Estrada Municipal' AND via <> 'Outra Via' group by via order by count(via) desc");
 		}
 

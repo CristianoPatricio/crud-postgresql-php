@@ -31,7 +31,7 @@ if (pg_num_rows($result) != 0) {
 
     $sqlDeleteRecord = "DELETE FROM sinistros WHERE id_sinistro = $id_sinistro;";
     $q = pg_query($con,$sqlDeleteRecord);
-    pg_query("SELECT pg_sleep(3);");
+    //pg_query("SELECT pg_sleep(3);");
     
     if ($q) {
         pg_query("COMMIT") or die("Transaction commit failed\n");	

@@ -265,7 +265,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 			$pdo->beginTransaction();
 
 			if ((!(isset($_GET['dataInicio'])) || !(isset($_GET['dataFim']))) || $_GET['dataInicio'] == null || $_GET['dataFim'] == null) {
-				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros, pg_sleep(3) ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros ORDER BY id_sinistro DESC LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			} else {
 				$dataInicio = $_GET['dataInicio'];
 				$dataFim = $_GET['dataFim'];
@@ -285,14 +285,14 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 				$con = pg_connect("host=52.47.199.255 dbname=teste user=ubuntu password=1234");
 				//echo $dataInicio; echo " | "; echo "$dataInicioRevert"; echo " | "; echo $dataFim; echo " | "; echo $dataFimRevert;
 
-				$qry1 = "SELECT id_sinistro FROM sinistros, pg_sleep(3) WHERE datahora like '%$dataInicio%' or datahora like '%$dataInicioRevert%' ORDER BY id_sinistro LIMIT 1;";
+				$qry1 = "SELECT id_sinistro FROM sinistros WHERE datahora like '%$dataInicio%' or datahora like '%$dataInicioRevert%' ORDER BY id_sinistro LIMIT 1;";
 				$result = pg_query($con, $qry1);
 				$row = pg_fetch_row($result);
 				$id_sinistro_inicial = $row[0];
 				//echo $id_sinistro_inicial;
 				//echo " \ ";
 
-				$qry2 = "SELECT id_sinistro FROM sinistros, pg_sleep(3) WHERE datahora like '%$dataFim%' or datahora like '%$dataFimRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
+				$qry2 = "SELECT id_sinistro FROM sinistros WHERE datahora like '%$dataFim%' or datahora like '%$dataFimRevert%' ORDER BY id_sinistro DESC LIMIT 1;";
 				$result1 = pg_query($con, $qry2);
 				$row1 = pg_fetch_row($result1);
 				$id_sinistro_final = $row1[0];
@@ -304,7 +304,7 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 					$id_sinistro_inicial = $id_final;
 				}
 
-				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros, pg_sleep(3) WHERE id_sinistro >= $id_sinistro_inicial AND id_sinistro <= $id_sinistro_final ORDER BY id_sinistro LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
+				$sql = "SELECT id_sinistro, id_distrito, id_concelho, datahora, mortos, feridosgraves, via, quilometro, natureza, latitude, longitude FROM sinistros WHERE id_sinistro >= $id_sinistro_inicial AND id_sinistro <= $id_sinistro_final ORDER BY id_sinistro LIMIT " . QTDE_REGISTROS . " OFFSET {$linha_inicial}";
 			}
 
 			//echo $sql;
