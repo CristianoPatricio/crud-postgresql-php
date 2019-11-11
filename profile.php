@@ -178,30 +178,6 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 		</div>
 	</div>
 	<script>
-		if ("<?php echo $_SESSION['duplicate']; ?>" === "duplicate") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O utilizador já existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['duplicate'] = ""; ?>
-		} else if ("<?php echo $_SESSION['added']; ?>" === "added") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador inserido com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['added'] = ""; ?>
-		} else if ("<?php echo $_SESSION['failed']; ?>" === "failed") {
-			document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Ups! Erro ao inserir utilizador... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['failed'] = ""; ?>
-		}
-
-		if ("<? echo $_SESSION['delete']; ?>" === "failed"){
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Erro ao eliminar utilizador! O registo poderá estar a ser utilizado... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			
-		} else if ("<? echo $_SESSION['delete']; ?>" === "success") {
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-		}
-		<?php $_SESSION['delete'] = ""; ?>
-
-		if ("<? echo $_SESSION['update']; ?>" === "success") {
-			document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			<?php $_SESSION['update'] = ""; ?>
-		}
-
 		$('.modalEditarUser').click(function() {
 			var username = $(this).attr('data-user-name');
 			var role = $(this).attr('data-user-role');
@@ -224,6 +200,36 @@ if (!isset($_SESSION['loggedinAdmin'])) {
 				}
 			});
 		});
+		
+		<?php if (isset($_SESSION['duplicate']) || isset($_SESSION['added']) || isset($_SESSION['failed'])) { ?>
+			if ("<?php echo $_SESSION['duplicate']; ?>" === "duplicate") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-warning alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> O utilizador já existe! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['duplicate'] = ""; ?>
+			} else if ("<?php echo $_SESSION['added']; ?>" === "added") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador inserido com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['added'] = ""; ?>
+			} else if ("<?php echo $_SESSION['failed']; ?>" === "failed") {
+				document.querySelector("#errorMessage").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Ups! Erro ao inserir utilizador... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['failed'] = ""; ?>
+			}
+		<?php } ?>
+
+		<?php if (isset($_SESSION['delete'])) {?>
+			if ("<? echo $_SESSION['delete']; ?>" === "failed"){
+				document.querySelector("#msgActions").innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Erro ao eliminar utilizador! O registo poderá estar a ser utilizado... <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				
+			} else if ("<? echo $_SESSION['delete']; ?>" === "success") {
+				document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador eliminado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			}
+			<?php $_SESSION['delete'] = ""; ?>
+		<?php } ?>
+
+		<?php if (isset($_SESSION['update'])) {?>
+			if ("<? echo $_SESSION['update']; ?>" === "success") {
+				document.querySelector("#msgActions").innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 350px; text-align:center; margin:auto;"> Utilizador atualizado com sucesso! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				<?php $_SESSION['update'] = ""; ?>
+			}
+		<?php } ?>
 	</script>
 
 	<!-- MODAL EDITAR -->

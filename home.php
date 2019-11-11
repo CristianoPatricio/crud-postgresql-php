@@ -117,8 +117,8 @@ echo "USER-R:" . $_SESSION['loggedinUser-R'];
 		</form>
 		<script>
 			// Validação do formulário
-			$('#selectListDistritos').val('<?php echo $_GET['distrito']; ?>');
-			$('#selectListAno').val('<?php echo $_GET['ano']; ?>');
+			<?php if (isset($_GET['distrito'])) :?> $('#selectListDistritos').val('<?php echo $_GET['distrito']; ?>'); <?php endif; ?>
+			<?php if (isset($_GET['ano'])) :?> $('#selectListAno').val('<?php echo $_GET['ano']; ?>'); <?php endif; ?>
 
 			var btnLimpar = document.querySelector("#btnLimpar");
 
